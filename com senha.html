@@ -589,14 +589,15 @@
       </select>
     </div>
 
-    <div class="sidebar-section" style="display:none">
-      <label for="fill-select">Aproveitamento da página</label>
+    <div class="sidebar-section">
+      <label for="fill-select">Aproveitamento da página <span style="font-weight:400">(altura máxima das fotos)</span></label>
       <select id="fill-select">
         <option value="0.75">75%</option>
         <option value="0.80">80%</option>
-        <option value="0.85" selected>85%</option>
+        <option value="0.85">85%</option>
         <option value="0.90">90%</option>
         <option value="0.95">95%</option>
+        <option value="1.00" selected>100% (padrão)</option>
       </select>
     </div>
 
@@ -748,7 +749,7 @@ return ret;
     prefix: 'Foto',
     startNumber: 1,
     paper: 'A4',
-    fillFactor: 0.85,    // fração do espaço da linha usado por imagem+legenda
+    fillFactor: 1,       // aproveitamento da página: fração do teto de altura das fotos (não vale para destaque)
     gapCm: 0.5,          // vão horizontal fixo entre as duas fotos de uma linha
     compression: 'normal', // 'normal' | 'compressed'
     perPage: '4',        // '1'..'8': fotos por página padrão
@@ -1769,7 +1770,9 @@ return ret;
     const minLongPx = (MIN_LONG_CM[state.minSize] || 7) / 2.54 * 96;
     const badLongPx = BAD_LONG_CM / 2.54 * 96;
     const photos = state.photos.map((entry, index) => ({ entry, index }));
-    const capFor = (n) => Math.floor((CAP_MM[n] || 100) * MM_PX);
+    const fill = Math.min(1, Math.max(0.5, Number(state.fillFactor) || 1));
+    const capFor = (n) => Math.floor((CAP_MM[n] || 100) * MM_PX * fill);
+    const cap100For = (n) => Math.floor((CAP_MM[n] || 100) * MM_PX);
     const boxWFor = (c) => c === 1 ? Math.floor(textW / TWIPS_PER_PX) : Math.floor((textW - gapTwips) / 2 / TWIPS_PER_PX);
     const plan = [];
     { let i = 0, k = 0, cutPending = false, lastSoloId = null;
@@ -1793,10 +1796,15 @@ return ret;
     // Cada página: o teto da sua quantidade, ou menos se a legenda pedir espaço (só ela encolhe).
     const pages = plan.map((pl) => {
       const cols = pl.solo || pl.n <= 2 ? 1 : 2;
-      const r = layoutPageRows(pl.items, boxWFor(cols), availTwips, cols, true, pl.solo ? Infinity : capFor(pl.n));
+      // Aproveitamento da página: só as páginas normais usam a fração escolhida da altura útil; o destaque usa a folha toda.
+      // Abaixo de 100%, a foto nunca fica maior do que ficaria a 100% (a estimativa da legenda não é monotônica).
+      const full = pl.solo || fill >= 1 ? null : layoutPageRows(pl.items, boxWFor(cols), availTwips, cols, true, cap100For(pl.n));
+      const r = layoutPageRows(pl.items, boxWFor(cols), pl.solo ? availTwips : Math.floor(availTwips * fill), cols, true,
+        pl.solo ? Infinity : (full ? Math.min(capFor(pl.n), full.uniformH) : capFor(pl.n)));
       // Âmbar: abaixo do mínimo escolhido, mas nunca acima de 90% do teto da quantidade
       // (com 5 a 8 fotos o teto já é menor que o mínimo, e o aviso apareceria sempre).
-      const warnPx = pl.solo ? minLongPx : Math.min(minLongPx, 0.9 * capFor(pl.n));
+      // O limiar usa o teto a 100%: baixar o aproveitamento encolhe a foto, mas não o limiar do aviso.
+      const warnPx = pl.solo ? minLongPx : Math.min(minLongPx, 0.9 * cap100For(pl.n));
       const level = r.minLong < badLongPx ? 'bad' : (r.minLong < warnPx ? 'warn' : null);
       return {
         solo: pl.solo, n: pl.n, slot: pl.slot, soloKey: pl.soloKey == null ? null : pl.soloKey, custom: !!pl.custom, cut: !!pl.cut,
@@ -2060,6 +2068,7 @@ return ret;
   function applySettings(s) {
     s = s || {};
     SETTING_KEYS.forEach(k => { if (s[k] !== undefined && s[k] !== null) state[k] = s[k]; });
+    if (s.fillFactor === undefined || s.fillFactor === null) state.fillFactor = DEFAULT_SETTINGS.fillFactor; // arquivo sem o campo: 100%
     state.startNumber = Math.max(1, parseInt(state.startNumber, 10) || 1);
     const gap = parseFloat(state.gapCm);
     state.gapCm = (isNaN(gap) || gap < 0) ? 0 : Math.min(gap, 3);
@@ -2517,6 +2526,7 @@ return ret;
     state.photos      = [];
     state.filename    = DEFAULT_SETTINGS.filename;
     state.startNumber = DEFAULT_SETTINGS.startNumber;
+    state.perPage     = DEFAULT_SETTINGS.perPage;
     state.pageSizes   = [];
     state.afterSoloSizes = {};
     syncSettingsUI();
