@@ -39,7 +39,7 @@ Open an `.html` file directly in Chrome, Edge or Firefox. No install, no server.
 - **Warnings:** amber chip below the minimum size (`minSize`, Pequeno/Médio/Grande, capped at 90% of the row height ceiling for the chosen count); red chip below 4 cm: "Foto abaixo de 4 cm. Use menos fotos nesta página ou encurte a legenda."
 - **Page geometry (A4):** top 25 mm, bottom 18 mm, sides 20 mm, logo max 12 mm, fixed 5 mm slack, final paragraph of 1 pt. Table widths must not exceed the usable width (9638 twips on A4).
 - **Novo projeto:** clears photos, `pageSizes` and `afterSoloSizes`, and resets the sidebar default to 4.
-- **Aproveitamento da página (`fillFactor`):** works. Options 75%, 80%, 85%, 90%, 95%, 100% (default). Multiplies the usable height and the row height ceiling of normal pages only; never applies to a `solo` page. It must not change which photos go on which page. Saved in `.anexo` (invalid values fall back to 100%). "Novo projeto" keeps it (pending Vitor's decision). Known issue: the amber warning threshold (90% of the ceiling) shrinks with the fill, so it can disappear at lower fill; fix is to compute the threshold from the 100% ceiling. Also: at 95% with long captions a photo can be up to ~4.5 mm bigger than at 100%.
+- **Aproveitamento da página (`fillFactor`):** works. Options 75%, 80%, 85%, 90%, 95%, 100% (default). Multiplies the usable height and the row height ceiling of normal pages only; never applies to a `solo` page. It must not change which photos go on which page. Saved in `.anexo` (invalid values fall back to 100%). "Novo projeto" keeps it (pending Vitor's decision). The amber warning threshold (90% of the ceiling) is computed from the 100% ceiling, so lowering the fill never hides a warning. Below 100% a photo is capped at its size at 100%. A `.anexo` without the field opens at 100%.
 
 ## Project persistence
 
@@ -77,7 +77,7 @@ In Chrome/Edge the File System Access API lets "Salvar" overwrite the same file 
 | F17 | Save/resume: `.anexo` + IndexedDB backup | ✅ |
 | F18 | "Uma por página" flag | ✅ v2 |
 | F19 | Photos-per-page selector per page | ✅ v2 |
-| F20 | Aproveitamento da página (optional) | implemented; QA found warning-threshold bug, fix pending |
+| F20 | Aproveitamento da página (optional) | implemented; validated by QA 2026-11-14 |
 
 ## Out of Scope
 

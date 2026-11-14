@@ -96,8 +96,6 @@ Exemplo (10 fotos mistas, A4, 6 por página): maior lado da menor foto de 6,8 cm
 - Fotos muito estreitas ou muito largas (menos de cerca de 1,5 cm) podem sair levemente distorcidas.
 - Não foi testado com fotos reais (HEIC, rotação EXIF) nem com logo real.
 
-- **Aviso âmbar com percentual abaixo de 100%:** o limite do aviso usa o percentual, então pode sumir quando a foto fica menor. Correção em andamento.
-
 ## Tecnologia
 
 - HTML, CSS e JavaScript puros, em um arquivo só, sem framework e sem build.
@@ -121,4 +119,4 @@ Chrome 90+, Edge 90+ ou Firefox 88+.
 
 | Versão | Data | Mudanças |
 |---|---|---|
-| 2.0 (em desenvolvimento) | 2026-11-14 | Projeto novo, separado do original. Quantidade de fotos por página escolhida pelo usuário (padrão 4). Foto "Uma por página". Páginas A4/Letter iguais ao `.docx`. Sem modo Automático. Sem aviso de legenda longa. |
+| 2.0 | 2026-11-14 | Projeto novo, separado do original. Quantidade de fotos por página escolhida pelo usuário (padrão 4). Foto "Uma por página". Páginas A4/Letter iguais ao `.docx`. Sem modo Automático. Sem aviso de legenda longa. "Aproveitamento da página" de 75% a 100% (padrão 100%): só reduz o tamanho das fotos, o limite do aviso âmbar sai do tamanho a 100% e uma foto nunca fica maior que a 100%. `.anexo` sem o campo abre a 100%. Estrutura do `.docx` validada pelo QA; Word real ainda não testado. |
