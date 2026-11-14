@@ -66,7 +66,17 @@ Esta é a v2, um projeto separado do `picture_arrangement` original.
 
 ## Aproveitamento da página
 
-> **Em andamento.** O seletor "Aproveitamento da página" (75% a 95%) existe na barra lateral e é salvo no `.anexo`, mas **ainda não altera a paginação**. Está em implementação nesta v2, com 100% como padrão (sem mudança em relação a hoje). Esta seção será atualizada quando estiver pronto e testado.
+Configuração opcional na barra lateral. Reduz a altura que as fotos podem ocupar em cada página, deixando mais respiro.
+
+- **Valores:** 75%, 80%, 85%, 90%, 95% e **100% (padrão)**. Com 100% nada muda.
+- **O que muda:** só o tamanho das fotos. Quantas fotos vão em cada página e a ordem continuam iguais.
+- **Foto "Uma por página":** não é afetada. Continua ocupando a folha toda.
+- **Só reduz onde a altura é o limite.** Com fotos em pé e deitadas na mesma linha, a largura costuma limitar antes, e a diferença entre os valores pode ser pequena.
+- **Salvar e retomar:** o valor vai no `.anexo`. Um arquivo do projeto original, salvo com 85% (o padrão antigo), abre com 85%. Troque para 100% se quiser.
+- **"Novo projeto":** mantém o percentual escolhido (tratado como preferência sua).
+- **Avisos de tamanho:** o aviso vermelho (abaixo de 4 cm) vale em qualquer percentual. O aviso âmbar com percentual abaixo de 100% está em revisão (ver Limites conhecidos).
+
+Exemplo (10 fotos mistas, A4, 6 por página): maior lado da menor foto de 6,8 cm a 100%, 5,8 cm a 85% e 5,1 cm a 75%.
 
 ## Problemas comuns
 
@@ -85,6 +95,8 @@ Esta é a v2, um projeto separado do `picture_arrangement` original.
 - As fotos JPEG ficam nomeadas `.png` dentro do `.docx` (limitação do `docx.js` 7.8.2). O conteúdo é JPEG. Não foi confirmado se o Word reclama.
 - Fotos muito estreitas ou muito largas (menos de cerca de 1,5 cm) podem sair levemente distorcidas.
 - Não foi testado com fotos reais (HEIC, rotação EXIF) nem com logo real.
+
+- **Aviso âmbar com percentual abaixo de 100%:** o limite do aviso usa o percentual, então pode sumir quando a foto fica menor. Correção em andamento.
 
 ## Tecnologia
 
